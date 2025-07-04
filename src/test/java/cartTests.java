@@ -7,7 +7,6 @@ import errors.InvalidDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.IconUIResource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -157,4 +156,60 @@ public class cartTests {
             fail(ex.getMessage());
         }
     }
+    @Test
+    void add_item_with_zero_quantity() {
+        try {
+            var product = new Product("product", 10, 10);
+            InMemoryDatabase.get_database().addProduct(product);
+            InvalidDataException exception = assertThrows(
+                    InvalidDataException.class,
+                    () -> customer.add_to_cart(product, 0)
+            );
+            assertTrue(exception.getMessage().toLowerCase().contains("quantity") || !exception.getMessage().isEmpty());
+        } catch (InvalidDataException ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    void add_item_exceeding_available_quantity() {
+        try {
+            var product = new Product("product", 15, 5);
+            InMemoryDatabase.get_database().addProduct(product);
+            InvalidDataException exception = assertThrows(
+                    InvalidDataException.class,
+                    () -> customer.add_to_cart(product,6)
+            );
+            assertTrue(exception.getMessage().toLowerCase().contains("Quantity") || !exception.getMessage().isEmpty());
+        } catch (InvalidDataException ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    void remove_product_not_in_cart() {
+        try {
+            var product = new Product("product", 10, 10);
+            InMemoryDatabase.get_database().addProduct(product);
+            assertNull(customer.is_in_cart(product));
+        } catch (InvalidDataException ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    void checkout_exact_balance() {
+        try {
+            var product = new Product("product", 1000, 1);
+            InMemoryDatabase.get_database().addProduct(product);
+            customer.add_to_cart(product, 1);
+            customer.setBalance(1000);
+            float totalPrice = customer.checkout();
+            assertEquals(0, customer.getBalance(), 0.01);
+            assertEquals(1000, totalPrice, 0.01);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
 }

@@ -12,6 +12,10 @@ public class Customer {
         this.balance = balance;
     }
 
+    public float getBalance() {
+        return balance;
+    }
+
     private float balance;
     private Cart cart;
 
@@ -29,9 +33,10 @@ public class Customer {
         return this.cart.is_in_cart(product.productID);
     }
 
-    public void checkout() throws EmptyCart, InsufficientAmountOfMoney {
+    public float checkout() throws EmptyCart, InsufficientAmountOfMoney,InvalidDataException {
         var total_price = this.cart.checkout(balance);
         this.balance -= total_price;
         System.out.println("Current Balance : " + balance + "\n");
+        return total_price;
     }
 }

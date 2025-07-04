@@ -57,4 +57,13 @@ public class InMemoryDatabase {
         }
         return false;
     }
+
+    public boolean canBeAddedToCart(int productId, int quantity) {
+        for (Product p : products) {
+            if (p.getProductID() == productId) {
+                return p.getQuantity() >= quantity;
+            }
+        }
+        return false;
+    }
 }
