@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class inMemoryDatabaseTests {
+public class InMemoryDatabaseTests {
     int numberOfProducts = 10;
     ArrayList<Product> products;
 

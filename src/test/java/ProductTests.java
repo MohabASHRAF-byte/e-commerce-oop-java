@@ -14,7 +14,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class productTests {
+public class ProductTests {
     String productName = "Product1";
     int productPrice = 10;
     int productQuantity = 4;

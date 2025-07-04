@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class cartTests {
+public class CartTests {
     Customer customer;
 
     @BeforeEach
