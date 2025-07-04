@@ -119,6 +119,7 @@ public class cartTests {
     @Test
     void checkout_insufficient_amount_of_money() {
         try {
+            customer.setBalance(20);
             var product = new Product("product", 5, 10);
             InMemoryDatabase.get_database().addProduct(product);
             customer.add_to_cart(product, 5);

@@ -7,6 +7,11 @@ import errors.InvalidDataException;
 public class Customer {
 
     private String name;
+
+    public void setBalance(float balance) {
+        this.balance = balance;
+    }
+
     private float balance;
     private Cart cart;
 

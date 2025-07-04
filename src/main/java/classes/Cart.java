@@ -16,8 +16,6 @@ public class Cart {
     }
 
     public void add_item(int productId, int quantity) throws InvalidDataException {
-
-
         boolean found = false;
         for (var cartItem : items) {
             if (cartItem.productId == productId) {
@@ -28,7 +26,6 @@ public class Cart {
         if (!found) {
             items.add(new CartItem(productId, quantity));
         }
-
     }
 
     public Integer is_in_cart(int productID) {
@@ -47,26 +44,25 @@ public class Cart {
         subtotalPrice = CalculatePriceWithoutShipping();
         shippingFees = CalculateShippingPrice();
         totalPrice = subtotalPrice + shippingFees;
-        if (totalPrice > balance)
+        if (totalPrice > balance) {
             throw new InsufficientAmountOfMoney();
-
+        }
         if (ExecuteTransaction()) {
             print_checkout();
             items.clear();
-        } else
+        } else {
             totalPrice = 0;
+        }
         return totalPrice;
     }
 
     private void print_checkout() {
-
         StringBuilder shippingPrint = new StringBuilder();
         StringBuilder checkOutPrint = new StringBuilder();
         shippingPrint.append("** Shipment notice **\n");
         checkOutPrint.append("** Checkout receipt **\n");
         for (var item : items) {
-            var product =
-                    InMemoryDatabase.get_database().findProductById(item.productId);
+            var product = InMemoryDatabase.get_database().findProductById(item.productId);
             if (product != null && product.getShippable()) {
                 var total_product_weight = item.quantity * product.getWeight();
                 shippingPrint.append(item.quantity)
@@ -78,8 +74,7 @@ public class Cart {
             }
             if (product != null) {
                 var productPrice = product.getPrice() * item.quantity;
-                checkOutPrint
-                        .append(item.quantity)
+                checkOutPrint.append(item.quantity)
                         .append("x ")
                         .append(product.getName())
                         .append("\t")
@@ -87,14 +82,11 @@ public class Cart {
                         .append("\n");
             }
         }
-
         shippingPrint.append("Total package weight : ").append(totalWeightInGrams).append("g\n");
-        checkOutPrint
-                .append(".......................\n")
+        checkOutPrint.append(".......................\n")
                 .append("Subtotal :").append("\t").append(subtotalPrice).append("\n")
                 .append("Shipping :").append("\t").append(shippingFees).append("\n")
                 .append("Amount :").append("\t").append(totalPrice).append("\n");
-
         System.out.println(shippingPrint);
         System.out.println(checkOutPrint);
     }
@@ -103,36 +95,30 @@ public class Cart {
         ArrayList<CartItem> Executed = new ArrayList<>();
         try {
             for (var item : items) {
-                var product =
-                        InMemoryDatabase.get_database().findProductById(item.productId);
+                var product = InMemoryDatabase.get_database().findProductById(item.productId);
                 if (product != null && product.getQuantity() >= item.quantity) {
                     product.setQuantity(product.getQuantity() - item.quantity);
                     Executed.add(item);
                 }
             }
         } catch (Exception ex) {
-            for (var item : Executed) {
-                var product =
-                        InMemoryDatabase.get_database().findProductById(item.productId);
-                if (product != null) {
-                    product.setQuantity(product.getQuantity() + item.quantity);
-                    Executed.add(item);
-                }
-            }
+            rollbackExecutedItems(Executed);
             return false;
         }
         if (Executed.size() != items.size()) {
-            for (var item : Executed) {
-                var product =
-                        InMemoryDatabase.get_database().findProductById(item.productId);
-                if (product != null) {
-                    product.setQuantity(product.getQuantity() + item.quantity);
-                    Executed.add(item);
-                }
-            }
+            rollbackExecutedItems(Executed);
             return false;
         }
         return true;
+    }
+
+    private void rollbackExecutedItems(ArrayList<CartItem> executed) {
+        for (var item : executed) {
+            var product = InMemoryDatabase.get_database().findProductById(item.productId);
+            if (product != null) {
+                product.setQuantity(product.getQuantity() + item.quantity);
+            }
+        }
     }
 
     private float CalculateShippingPrice() {
@@ -140,10 +126,10 @@ public class Cart {
         totalWeightInGrams = 0;
         for (var item : items) {
             var product = db.findProductById(item.productId);
-            if (product.getShippable())
+            if (product.getShippable()) {
                 totalWeightInGrams += product.getWeight() * item.quantity;
+            }
         }
-
         return totalWeightInGrams * InMemoryDatabase.ShippingPricePerGram;
     }
 
