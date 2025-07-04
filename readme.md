@@ -28,3 +28,12 @@ This project is an e-commerce application developed using **Test-Driven Developm
 
 - **Unit tests:**  
   `src/test/java`
+
+---
+
+## Running Tests
+
+To run the tests, use the following Maven command:
+
+```bash
+mvn clean test
