@@ -3,11 +3,6 @@ import errors.InvalidDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.crypto.Data;
-
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -29,7 +24,7 @@ public class ProductTests {
         weight = 10;
         LocalDate localDate = LocalDate.of(2025, 7, 10);
         expiryDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Product.IDs=0;
+        Product.IDs = 0;
     }
 
     @Test
@@ -43,7 +38,7 @@ public class ProductTests {
             assertEquals(productQuantity, product.getQuantity());
             assertEquals(false, product.getExpirable());
             assertEquals(false, product.getShippable());
-            assertEquals(1,product.productID);
+            assertEquals(1, product.productID);
         } catch (InvalidDataException ex) {
             fail(ex.getMessage());
         }
@@ -113,7 +108,7 @@ public class ProductTests {
     }
 
     @Test
-    void add_product_with_valid_weight(){
+    void add_product_with_valid_weight() {
         try {
             var product = new Product(productName, productPrice, productQuantity);
             product.setWeight(weight);
@@ -123,8 +118,9 @@ public class ProductTests {
             fail(ex.getMessage());
         }
     }
+
     @Test
-    void add_product_with_invalid_weight(){
+    void add_product_with_invalid_weight() {
         this.weight = -1;
         InvalidDataException exception =
                 assertThrows(

@@ -7,7 +7,6 @@ import errors.InvalidDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CartTests {
@@ -156,6 +155,7 @@ public class CartTests {
             fail(ex.getMessage());
         }
     }
+
     @Test
     void add_item_with_zero_quantity() {
         try {
@@ -178,7 +178,7 @@ public class CartTests {
             InMemoryDatabase.get_database().addProduct(product);
             InvalidDataException exception = assertThrows(
                     InvalidDataException.class,
-                    () -> customer.add_to_cart(product,6)
+                    () -> customer.add_to_cart(product, 6)
             );
             assertTrue(exception.getMessage().toLowerCase().contains("Quantity") || !exception.getMessage().isEmpty());
         } catch (InvalidDataException ex) {

@@ -9,26 +9,13 @@ import java.util.Date;
 
 public class Product implements ShippableProduct {
 
+    public static int IDs = 0;
+    public int productID = 0;
     private String name;
     private float price;
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
     private int quantity;
-
-
-    public int productID = 0;
-    public static int IDs = 0;
-
     private Boolean isExpirable = false;
     private Date expiryDate;
-
     private Boolean isShippable = false;
     private float weight;
 
@@ -67,8 +54,16 @@ public class Product implements ShippableProduct {
         return price;
     }
 
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
     public int getQuantity() {
         return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public Boolean getExpirable() {
@@ -79,15 +74,6 @@ public class Product implements ShippableProduct {
         return expiryDate;
     }
 
-    public Boolean getShippable() {
-        return isShippable;
-    }
-
-    @Override
-    public float getWeight() {
-        return weight;
-    }
-
     public void setExpiryDate(Date ExpiryDate) throws InvalidDataException {
         LocalDate today = LocalDate.now();
         Date todayDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -95,6 +81,15 @@ public class Product implements ShippableProduct {
             throw new InvalidDataException("Expiry Date should not be past date");
         this.isExpirable = true;
         this.expiryDate = ExpiryDate;
+    }
+
+    public Boolean getShippable() {
+        return isShippable;
+    }
+
+    @Override
+    public float getWeight() {
+        return weight;
     }
 
     public void setWeight(int weight) throws InvalidDataException {

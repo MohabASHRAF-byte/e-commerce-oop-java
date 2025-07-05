@@ -8,6 +8,7 @@ import java.util.List;
 public class InMemoryDatabase {
     public static float ShippingPricePerGram = 0.01f;
     public static InMemoryDatabase database;
+    private final List<Product> products = new ArrayList<>();
 
     public static InMemoryDatabase get_database() {
         if (database == null) {
@@ -15,8 +16,6 @@ public class InMemoryDatabase {
         }
         return database;
     }
-
-    private final List<Product> products = new ArrayList<>();
 
     public void addProduct(Product product) {
         products.add(product);

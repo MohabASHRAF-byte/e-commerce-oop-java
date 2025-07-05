@@ -1,6 +1,7 @@
 # Fawary Task E-Commerce Project
 
 ## Developer
+
 Mohab Ashraf Kamal Tawfik  
 Email: a.mohab148@gmail.com
 
@@ -17,7 +18,8 @@ Email: a.mohab148@gmail.com
 
 ## Project Overview
 
-This project is an e-commerce application developed using **Test-Driven Development (TDD)** methodology. All features are built incrementally with corresponding unit tests ensuring correctness and reliability.
+This project is an e-commerce application developed using **Test-Driven Development (TDD)** methodology. All features
+are built incrementally with corresponding unit tests ensuring correctness and reliability.
 
 ---
 
