@@ -6,6 +6,8 @@ import errors.InsufficientAmountOfMoney;
 import errors.InvalidDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,38 +21,40 @@ public class CartTests {
         InMemoryDatabase.database = null;
     }
 
-    @Test
-    void add_valid_item() {
+    private Product createAndAddProduct(String name, int price, int quantity) {
         try {
-            var product = new Product("product", 10, 10);
+            Product product = new Product(name, price, quantity);
             InMemoryDatabase.get_database().addProduct(product);
-            customer.add_to_cart(product, 5);
+            return product;
         } catch (InvalidDataException ex) {
             fail(ex.getMessage());
+            return null;
         }
     }
 
     @Test
-    void add_not_exist_item() {
-        try {
-            var product = new Product("product", 3, 3);
-            InvalidDataException exception =
-                    assertThrows(
-                            InvalidDataException.class,
-                            () -> customer.add_to_cart(product, 3)
-                    );
-            assertTrue(exception.getMessage().contains("Product") || !exception.getMessage().isEmpty());
+    void add_valid_item() {
+        assertNotNull(createAndAddProduct("product", 10, 10));
+    }
 
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
-        }
+    @Test
+    void add_not_exist_item() {
+        InvalidDataException exception =
+                assertThrows(
+                        InvalidDataException.class,
+                        () -> {
+                            var product = new Product("product", 3, 3);
+                            customer.add_to_cart(product, 3);
+                        }
+                );
+        assertTrue(exception.getMessage().contains("Product"));
     }
 
     @Test
     void add_repeated_element() {
         try {
-            var product = new Product("product", 10, 10);
-            InMemoryDatabase.get_database().addProduct(product);
+            var product = createAndAddProduct("product", 10, 10);
+            assertNotNull(product);
             customer.add_to_cart(product, 2);
             customer.add_to_cart(product, 3);
             assertEquals(5, customer.is_in_cart(product));
@@ -62,13 +66,13 @@ public class CartTests {
     @Test
     void add_multiple_products_with_various_quantities() {
         try {
-            var product1 = new Product("product1", 10, 10);
-            var product2 = new Product("product2", 20, 5);
-            var product3 = new Product("product3", 5, 20);
+            var product1 = createAndAddProduct("product1", 10, 10);
+            var product2 = createAndAddProduct("product2", 20, 5);
+            var product3 = createAndAddProduct("product3", 5, 20);
 
-            InMemoryDatabase.get_database().addProduct(product1);
-            InMemoryDatabase.get_database().addProduct(product2);
-            InMemoryDatabase.get_database().addProduct(product3);
+            assertNotNull(product1);
+            assertNotNull(product2);
+            assertNotNull(product3);
 
             customer.add_to_cart(product1, 3);
             customer.add_to_cart(product2, 4);
@@ -84,67 +88,46 @@ public class CartTests {
     }
 
     @Test
-    void add_invalid_quantity() {
-        try {
-            var product = new Product("product", 3, 3);
-            InvalidDataException exception =
-                    assertThrows(
-                            InvalidDataException.class,
-                            () -> customer.add_to_cart(product, -3)
-                    );
-            assertTrue(exception.getMessage().contains("Quantity") || !exception.getMessage().isEmpty());
-
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
     void checkout_empty_cart_test() {
-        try {
-            EmptyCart exception =
-                    assertThrows(
-                            EmptyCart.class,
-                            () -> customer.checkout()
-                    );
-            assertTrue(exception.getMessage().contains("Cart") || !exception.getMessage().isEmpty());
-
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        EmptyCart exception =
+                assertThrows(
+                        EmptyCart.class,
+                        () -> customer.checkout()
+                );
+        assertTrue(exception.getMessage().contains("Cart"));
     }
 
     @Test
     void checkout_insufficient_amount_of_money() {
-        try {
-            customer.setBalance(20);
-            var product = new Product("product", 5, 10);
-            InMemoryDatabase.get_database().addProduct(product);
-            customer.add_to_cart(product, 5);
-            InsufficientAmountOfMoney exception =
-                    assertThrows(
-                            InsufficientAmountOfMoney.class,
-                            () -> customer.checkout()
-                    );
-            assertTrue(exception.getMessage().contains("Money") || !exception.getMessage().isEmpty());
 
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        InsufficientAmountOfMoney exception =
+                assertThrows(
+                        InsufficientAmountOfMoney.class,
+                        () -> {
+                            customer.setBalance(20);
+                            var product = createAndAddProduct("product", 5, 10);
+                            assertNotNull(product);
+                            customer.add_to_cart(product, 5);
+                            customer.checkout();
+                        }
+                );
+        assertTrue(exception.getMessage().contains("Money"));
+
     }
 
     @Test
     void checkout_shippable_products() {
         try {
-            var Cheese = new Product("Cheese", 100, 10);
-            var Biscuits = new Product("Biscuits", 150, 10);
-            var Tv = new Product("TV", 500, 1);
+            var Cheese = createAndAddProduct("Cheese", 100, 10);
+            var Biscuits = createAndAddProduct("Biscuits", 150, 10);
+            var Tv = createAndAddProduct("TV", 500, 1);
+
+            assertNotNull(Cheese);
+            assertNotNull(Biscuits);
+            assertNotNull(Tv);
+
             Cheese.setWeight(200);
             Biscuits.setWeight(700);
-
-            InMemoryDatabase.get_database().addProduct(Cheese);
-            InMemoryDatabase.get_database().addProduct(Biscuits);
-            InMemoryDatabase.get_database().addProduct(Tv);
 
             customer.add_to_cart(Cheese, 2);
             customer.add_to_cart(Biscuits, 1);
@@ -156,52 +139,37 @@ public class CartTests {
         }
     }
 
-    @Test
-    void add_item_with_zero_quantity() {
-        try {
-            var product = new Product("product", 10, 10);
-            InMemoryDatabase.get_database().addProduct(product);
-            InvalidDataException exception = assertThrows(
-                    InvalidDataException.class,
-                    () -> customer.add_to_cart(product, 0)
-            );
-            assertTrue(exception.getMessage().toLowerCase().contains("quantity") || !exception.getMessage().isEmpty());
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    void add_item_exceeding_available_quantity() {
-        try {
-            var product = new Product("product", 15, 5);
-            InMemoryDatabase.get_database().addProduct(product);
-            InvalidDataException exception = assertThrows(
-                    InvalidDataException.class,
-                    () -> customer.add_to_cart(product, 6)
-            );
-            assertTrue(exception.getMessage().toLowerCase().contains("Quantity") || !exception.getMessage().isEmpty());
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
-        }
+    @ParameterizedTest(name = "[{index}] {1}")
+    @CsvSource({
+            "-3, 'negative quantity'",
+            "0, 'zero quantity'",
+            "6, 'exceeding available quantity'"
+    })
+    void add_invalid_quantity_throws(int invalidQuantity, String testName) {
+        InvalidDataException exception = assertThrows(
+                InvalidDataException.class,
+                () -> {
+                    var product = createAndAddProduct("product", 5, 5); // stock = 5
+                    assertNotNull(product);
+                    customer.add_to_cart(product, invalidQuantity);
+                }
+        );
+        assertTrue(exception.getMessage().toLowerCase().contains("quantity"));
     }
 
     @Test
     void remove_product_not_in_cart() {
-        try {
-            var product = new Product("product", 10, 10);
-            InMemoryDatabase.get_database().addProduct(product);
-            assertNull(customer.is_in_cart(product));
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
-        }
+        var product = createAndAddProduct("product", 10, 10);
+        assertNotNull(product);
+        assertNull(customer.is_in_cart(product));
+
     }
 
     @Test
     void checkout_exact_balance() {
         try {
-            var product = new Product("product", 1000, 1);
-            InMemoryDatabase.get_database().addProduct(product);
+            var product = createAndAddProduct("product", 1000, 1);
+            assertNotNull(product);
             customer.add_to_cart(product, 1);
             customer.setBalance(1000);
             float totalPrice = customer.checkout();
@@ -211,5 +179,4 @@ public class CartTests {
             fail(ex.getMessage());
         }
     }
-
 }
