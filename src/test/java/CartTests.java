@@ -15,7 +15,7 @@ public class CartTests {
     @BeforeEach
     void setUp() {
         customer = new Customer("Customer", 1000);
-        Product.IDs = 0;
+        Product.resetIDsCounter();
         InMemoryDatabase.database = null;
     }
 

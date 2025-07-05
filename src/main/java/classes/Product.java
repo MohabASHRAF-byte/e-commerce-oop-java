@@ -84,4 +84,8 @@ public class Product implements ShippableProduct {
         this.weight = Validations.assignNonNegative(weight, "Weight");
         this.isShippable = true;
     }
+
+    public static void resetIDsCounter() {
+        Product.IDs = 0;
+    }
 }

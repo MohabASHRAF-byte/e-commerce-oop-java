@@ -24,7 +24,7 @@ public class ProductTests {
         weight = 10;
         LocalDate localDate = LocalDate.of(2025, 7, 10);
         expiryDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Product.IDs = 0;
+        Product.resetIDsCounter();
     }
 
     @Test

@@ -14,8 +14,8 @@ public class InMemoryDatabaseTests {
 
     @BeforeEach
     void setUp() {
-        Product.IDs = 0;
-        InMemoryDatabase.database = null;
+        Product.resetIDsCounter();
+        InMemoryDatabase.reset_database();
         this.products = new ArrayList<>();
         try {
             for (int i = 0; i < numberOfProducts; i++) {

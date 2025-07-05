@@ -17,6 +17,10 @@ public class InMemoryDatabase {
         return database;
     }
 
+    public static void reset_database() {
+        database = new InMemoryDatabase();
+    }
+
     public void addProduct(Product product) {
         products.add(product);
     }

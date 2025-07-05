@@ -16,8 +16,8 @@ public class PaymentTests {
     @BeforeEach
     void setUp() {
         customer = new Customer("Test Customer", 1000);
-        Product.IDs = 0;
-        InMemoryDatabase.database = null;
+        InMemoryDatabase.reset_database();
+        Product.resetIDsCounter();
     }
 
     @Test
