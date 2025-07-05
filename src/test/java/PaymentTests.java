@@ -155,7 +155,6 @@ public class PaymentTests {
         }
     }
 
-    // Test checkout calculations with decimal prices and weights ensuring precision to 2 decimals
     @Test
     void checkout_with_decimal_prices_and_weights_precision() {
         try {

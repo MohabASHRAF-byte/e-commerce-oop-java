@@ -1,10 +1,9 @@
 package classes;
 
+import Utilities.Validations;
 import errors.InvalidDataException;
 import interfaces.ShippableProduct;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 public class Product implements ShippableProduct {
@@ -24,18 +23,9 @@ public class Product implements ShippableProduct {
             int price,
             int quantity
     ) throws InvalidDataException {
-        if (name.isEmpty()) {
-            throw new InvalidDataException("Name Can't be empty");
-        }
-        this.name = name;
-        if (price < 0) {
-            throw new InvalidDataException("Price Can't be negative");
-        }
-        this.price = price;
-        if (quantity < 0) {
-            throw new InvalidDataException("Quantity Can't be negative");
-        }
-        this.quantity = quantity;
+        this.name = Validations.assignNonEmptyString(name);
+        this.price = Validations.assignNonNegative((float) price, "Price");
+        this.quantity = Validations.assignNonNegative(quantity, "Quantity");
         this.weight = 0;
         Product.IDs++;
         this.productID = Product.IDs;
@@ -75,10 +65,7 @@ public class Product implements ShippableProduct {
     }
 
     public void setExpiryDate(Date ExpiryDate) throws InvalidDataException {
-        LocalDate today = LocalDate.now();
-        Date todayDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        if (ExpiryDate.before(todayDate))
-            throw new InvalidDataException("Expiry Date should not be past date");
+        this.expiryDate = Validations.validateNotPastDate(ExpiryDate, "Expiry Date");
         this.isExpirable = true;
         this.expiryDate = ExpiryDate;
     }
@@ -93,10 +80,7 @@ public class Product implements ShippableProduct {
     }
 
     public void setWeight(int weight) throws InvalidDataException {
-        if (weight < 0) {
-            throw new InvalidDataException("Weight can't be empty");
-        }
-        this.weight = weight;
+        this.weight = Validations.assignNonNegative(weight, "Weight");
         this.isShippable = true;
     }
 }

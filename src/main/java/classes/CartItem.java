@@ -1,6 +1,7 @@
 package classes;
 
 import InMemoryDatabase.InMemoryDatabase;
+import Utilities.Validations;
 import errors.InvalidDataException;
 
 public class CartItem {
@@ -8,9 +9,7 @@ public class CartItem {
     public int quantity;
 
     public CartItem(int productId, int quantity) throws InvalidDataException {
-        if (quantity <= 0) {
-            throw new InvalidDataException("Quantity can't be negative");
-        }
+        Validations.assignPositive(quantity, "Quantity");
         if (!InMemoryDatabase.get_database().canBeAddedToCart(productId, quantity)) {
             throw new InvalidDataException("This Product is Not Exist or NO Enough Quantity");
         }
