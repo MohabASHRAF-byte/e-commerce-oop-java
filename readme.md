@@ -39,3 +39,17 @@ To run the tests, use the following Maven command:
 
 ```bash
 mvn clean test
+```
+## Performance Results & Optimization
+
+### Optimization Details
+
+The internal product storage was changed from a list with nested loops to a `HashMap` keyed by product ID. This optimization  improved the efficiency of product lookup, addition, and removal operations by reducing time complexity from linear to near-constant time.
+
+### Performance Results
+
+#### Old Result
+![Adding and removing products performance](https://i.ibb.co/VpgXG7Xq/image1.png)
+
+#### New Result
+![Adding and removing products performance](https://i.ibb.co/1fDVJxXV/image2.png)
