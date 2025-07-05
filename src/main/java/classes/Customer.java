@@ -25,11 +25,11 @@ public class Customer {
     }
 
     public void add_to_cart(Product product, int quantity) throws InvalidDataException {
-        this.cart.add_item(product.productID, quantity);
+        this.cart.add_item(product.getProductID(), quantity);
     }
 
     public Integer is_in_cart(Product product) {
-        return this.cart.is_in_cart(product.productID);
+        return this.cart.is_in_cart(product.getProductID());
     }
 
     public float checkout() throws EmptyCart, InsufficientAmountOfMoney, InvalidDataException {

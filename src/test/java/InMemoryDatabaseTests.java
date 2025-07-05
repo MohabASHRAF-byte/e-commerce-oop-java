@@ -30,7 +30,7 @@ public class InMemoryDatabaseTests {
     void add_single_product() {
         InMemoryDatabase.get_database().addProduct(products.getFirst());
         var product = InMemoryDatabase.get_database().findProductById(1);
-        assertEquals(product.productID, products.getFirst().productID);
+        assertEquals(product.getProductID(), products.getFirst().getProductID());
     }
 
     @Test

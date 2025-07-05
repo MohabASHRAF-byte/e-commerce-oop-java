@@ -38,7 +38,7 @@ public class ProductTests {
             assertEquals(productQuantity, product.getQuantity());
             assertEquals(false, product.getExpirable());
             assertEquals(false, product.getShippable());
-            assertEquals(1, product.productID);
+            assertEquals(1, product.getProductID());
         } catch (InvalidDataException ex) {
             fail(ex.getMessage());
         }

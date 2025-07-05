@@ -9,7 +9,8 @@ import java.util.Date;
 public class Product implements ShippableProduct {
 
     public static int IDs = 0;
-    public int productID = 0;
+
+    private int productID = 0;
     private String name;
     private float price;
     private int quantity;
