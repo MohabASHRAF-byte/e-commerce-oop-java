@@ -70,8 +70,6 @@ public class InMemoryDatabaseTests {
         InMemoryDatabase.reset_database();
 
         ArrayList<Product> products = new ArrayList<>();
-
-        long startAdd = System.currentTimeMillis();
         try {
             for (int i = 1; i <= count; i++) {
                 Product p = new Product("product" + i, i, i);
@@ -81,21 +79,12 @@ public class InMemoryDatabaseTests {
         } catch (InvalidDataException e) {
             fail("Failed to create/add product: " + e.getMessage());
         }
-        long endAdd = System.currentTimeMillis();
-
-        System.out.println("Adding " + count + " products took " + (endAdd - startAdd) + " ms");
-
         assertEquals(count, InMemoryDatabase.get_database().getNumberOfProducts());
 
-        long startRemove = System.currentTimeMillis();
         for (Product p : products) {
             boolean removed = InMemoryDatabase.get_database().removeProduct(p.getProductID());
             assertTrue(removed);
         }
-        long endRemove = System.currentTimeMillis();
-
-        System.out.println("Removing " + count + " products took " + (endRemove - startRemove) + " ms");
-
         assertEquals(0, InMemoryDatabase.get_database().getNumberOfProducts());
     }
 
