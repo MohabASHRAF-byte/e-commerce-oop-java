@@ -36,7 +36,7 @@ public class Validations {
     }
 
     public static String assignNonEmptyString(String str) throws InvalidDataException {
-        if (str != null && !str.isEmpty()) {
+        if (str != null && !str.trim().isEmpty()) {
             return str;
         }
         throw new InvalidDataException("Name can't be empty");

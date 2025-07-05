@@ -21,7 +21,7 @@ public class Product implements ShippableProduct {
 
     public Product(
             String name,
-            int price,
+            float price,
             int quantity
     ) throws InvalidDataException {
         this.name = Validations.assignNonEmptyString(name);

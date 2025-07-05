@@ -2,6 +2,8 @@ import classes.Product;
 import errors.InvalidDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,65 +29,75 @@ public class ProductTests {
         Product.resetIDsCounter();
     }
 
-    @Test
-    void add_valid_product_test() {
-
+    private Product createValidProduct() {
         try {
-            var product = new Product(productName, productPrice, productQuantity);
-
-            assertEquals(productName, product.getName());
-            assertEquals(productPrice, product.getPrice());
-            assertEquals(productQuantity, product.getQuantity());
-            assertEquals(false, product.getExpirable());
-            assertEquals(false, product.getShippable());
-            assertEquals(1, product.getProductID());
-        } catch (InvalidDataException ex) {
-            fail(ex.getMessage());
+            return new Product(productName, productPrice, productQuantity);
+        } catch (InvalidDataException e) {
+            fail("Unexpected exception: " + e.getMessage());
+            return null;
         }
     }
 
-    @Test
-    void add_invalid_product_name_test() {
-        this.productName = "";
-        InvalidDataException exception =
-                assertThrows(
-                        InvalidDataException.class,
-                        () -> new Product(productName, productPrice, productQuantity)
-                );
-        assertTrue(exception.getMessage().contains("Name") || !exception.getMessage().isEmpty());
+    private Product createValidProduct(String name, float price, int quantity) {
+        try {
+            return new Product(name, price, quantity);
+        } catch (InvalidDataException e) {
+            fail("Unexpected exception: " + e.getMessage());
+            return null;
+        }
     }
 
-    @Test
-    void add_invalid_product_price_test() {
-        this.productPrice = -10;
-        InvalidDataException exception =
-                assertThrows(
-                        InvalidDataException.class,
-                        () -> new Product(productName, productPrice, productQuantity)
-                );
-        assertTrue(exception.getMessage().contains("Price") || !exception.getMessage().isEmpty());
+    @ParameterizedTest(name = "[{index}] {0}")
+    @CsvSource({
+            "'Regular product', 'ProductA', 10, 5",
+            "'Zero price', 'ProductB', 0, 10",
+            "'Zero quantity', 'ProductC', 100, 0",
+            "'Zero price and quantity', 'ProductD', 0, 0",
+            "'Large price', 'ProductE', 1000000, 1",
+            "'Large quantity', 'ProductF', 1, 1000000"
+    })
+    void add_valid_product_test(String testName, String productName, int price, int quantity) {
+        var product = createValidProduct(productName, price, quantity);
+
+        assertNotNull(product, "Product should be created");
+        assertEquals(productName, product.getName(), "Name mismatch");
+        assertEquals(price, product.getPrice(), "Price mismatch");
+        assertEquals(quantity, product.getQuantity(), "Quantity mismatch");
+        assertFalse(product.getExpirable(), "Product should not be expirable initially");
+        assertFalse(product.getShippable(), "Product should not be shippable initially");
+        assertEquals(1, product.getProductID(), "Product ID should be 1 because IDs reset before each test");
     }
 
-    @Test
-    void add_invalid_product_quantity_test() {
+    @ParameterizedTest(name = "[{index}] {4}")
+    @CsvSource({
+            "'', 10, 4, Name, invalid name",
+            "Product1, -10, 4, Price, invalid price",
+            "Product1, 10, -4, Quantity, invalid quantity",
+            "'   ', 10, 4, Name, invalid name"
 
-        this.productQuantity = -4;
+    })
+    void add_product_invalid_params_throws(
+            String name,
+            int price,
+            int quantity,
+            String expectedMessagePart,
+            String displayName) {
 
-        InvalidDataException exception =
-                assertThrows(
-                        InvalidDataException.class,
-                        () -> new Product(productName, productPrice, productQuantity)
-                );
-        assertTrue(exception.getMessage().contains("Quantity") || !exception.getMessage().isEmpty());
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            new Product(name, price, quantity);
+        });
+        assertTrue(exception.getMessage().contains(expectedMessagePart));
     }
+
 
     @Test
     void add_product_with_expiry_date_test() {
         try {
-            var product = new Product(productName, productPrice, productQuantity);
+            var product = createValidProduct();
+            assertNotNull(product);
             product.setExpiryDate(expiryDate);
             assertEquals(expiryDate, product.getExpiryDate());
-            assertEquals(true, product.getExpirable());
+            assertTrue(product.getExpirable());
         } catch (InvalidDataException ex) {
             fail(ex.getMessage());
         }
@@ -99,21 +111,23 @@ public class ProductTests {
                 assertThrows(
                         InvalidDataException.class,
                         () -> {
-                            var product = new Product(productName, productPrice, productQuantity);
+                            var product = createValidProduct();
+                            assertNotNull(product);
                             product.setExpiryDate(expiryDate);
                         }
                 );
 
-        assertTrue(exception.getMessage().contains("Expiry") || !exception.getMessage().isEmpty());
+        assertTrue(exception.getMessage().contains("Expiry"));
     }
 
     @Test
     void add_product_with_valid_weight() {
         try {
-            var product = new Product(productName, productPrice, productQuantity);
+            var product = createValidProduct();
+            assertNotNull(product);
             product.setWeight(weight);
             assertEquals(weight, product.getWeight());
-            assertEquals(true, product.getShippable());
+            assertTrue(product.getShippable());
         } catch (InvalidDataException ex) {
             fail(ex.getMessage());
         }
@@ -121,13 +135,13 @@ public class ProductTests {
 
     @Test
     void add_product_with_invalid_weight() {
-        this.weight = -1;
         InvalidDataException exception =
                 assertThrows(
                         InvalidDataException.class,
                         () -> {
-                            var product = new Product(productName, productPrice, productQuantity);
-                            product.setWeight(weight);
+                            var product = createValidProduct();
+                            assertNotNull(product);
+                            product.setWeight(-1);
                         }
                 );
 
