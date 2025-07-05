@@ -77,7 +77,7 @@ public class InMemoryDatabaseTests {
                 products.add(p);
             }
         } catch (InvalidDataException e) {
-            fail("Failed to create/add product: " + e.getMessage());
+            fail(e.getMessage());
         }
         assertEquals(count, InMemoryDatabase.get_database().getNumberOfProducts());
 
